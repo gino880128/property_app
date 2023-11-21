@@ -1,0 +1,186 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Add Property</h1>
+  <form id="propertyForm" action="/add" method="post">
+    <label for="name">Property Name:</label>
+    <input type="text" name="name" required><br>
+
+    <label for="address">Property Address:</label>
+    <input type="text" name="address" required><br>
+
+    <label for="type">Property Type:</label>
+    <select name="type" required>
+      <option value="House">House</option>
+      <option value="Apartment">Apartment</option>
+      <option value="Townhouse">Townhouse</option>
+    </select><br>
+
+    <label for="listingType">Listing Type:</label>
+    <select name="listingType" required>
+      <option value="For sale">For sale</option>
+      <option value="For rent">For rent</option>
+    </select><br>
+
+    <label for="bedrooms">Number of Bedrooms:</label>
+    <input type="number" name="bedrooms" required><br>
+
+    <label for="bathrooms">Number of Bathrooms:</label>
+    <input type="number" name="bathrooms" required><br>
+
+    <label for="parking">Number of Parking Spaces:</label>
+    <input type="number" name="parking" required><br>
+
+    <label for="price">Price:</label>
+    <input type="number" name="price" required><br>
+
+    <label for="availableDate">Available Date:</label>
+    <input type="date" name="availableDate" required><br>
+
+    <label for="agentName">Agent Name:</label>
+    <input type="text" name="agentName" required><br>
+
+    <label for="agentEmail">Agent Email:</label>
+    <input type="email" name="agentEmail" required><br>
+
+    <label for="agentContactNumber">Agent Contact Number:</label>
+    <input type="text" name="agentContactNumber"><br>
+
+    <label for="exclusiveListing">Exclusive Listing:</label>
+    <input type="checkbox" name="exclusiveListing"><br>
+
+    <button type="submit">Add Property</button>
+  </form>
+
+
+  <h1>Property Listings</h1>
+  <ul id="property-list">
+    <!-- Properties will be dynamically added here -->
+  </ul>
+
+  <script>
+
+
+const property = {
+    properties: [
+      {
+        id: 1,
+        name: 'Property 1',
+        address: '123 Main St',
+        type: 'House',
+        listingType: 'For sale',
+        bedrooms: 3,
+        bathrooms: 2,
+        parking: 2,
+        price: 250000,
+        availableDate: new Date(),
+        agentName: 'Agent 1',
+        agentEmail: 'agent1@example.com',
+        agentContactNumber: '',
+        isExclusive: false,
+      },
+      {
+        id: 2,
+        name: 'Property 2',
+        address: '456 Elm St',
+        type: 'Apartment',
+        listingType: 'For rent',
+        bedrooms: 2,
+        bathrooms: 1,
+        parking: 1,
+        price: 1500,
+        availableDate: new Date(),
+        agentName: 'Agent 2',
+        agentEmail: 'agent2@example.com',
+        agentContactNumber: '',
+        isExclusive: true,
+      },
+    ],
+    addProperty: function(data) {
+      const newProperty = {
+        name: data.name,
+        address: data.address,
+        type: data.type,
+        listingType: data.listingType,
+        bedrooms: parseInt(data.bedrooms, 10),
+        bathrooms: parseInt(data.bathrooms, 10),
+        parking: parseInt(data.parking, 10),
+        price: parseFloat(data.price),
+        availableDate: new Date(data.availableDate),
+        agentName: data.agentName,
+        agentEmail: data.agentEmail,
+        agentContactNumber: data.agentContactNumber || "",
+        exclusiveListing: data.exclusiveListing === "on",
+      };
+
+      this.properties.push(newProperty);
+    },
+  };
+
+  // Get the form element
+  const form = document.getElementById("propertyForm");
+
+  // Handle the form submission
+  form.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Get form data
+    const formData = new FormData(form);
+    const formDataObject = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
+    });
+
+    console.log(formDataObject)
+
+    // Add the property to the property object
+    property.addProperty(formDataObject);
+
+    // Clear the form fields (optional)
+    form.reset();
+    renderProperties();
+    // Log the updated property object
+    console.log(property.properties);
+  });
+
+  
+    // JavaScript code to dynamically populate the property list
+    const propertyList = document.getElementById('property-list');
+    
+    // Function to render properties
+    function renderProperties() {
+      propertyList.innerHTML = ''; // Clear the existing list
+
+      property.properties.forEach((property) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+          <strong>${property.name}</strong><br>
+          Address: ${property.address}<br>
+          Type: ${property.type}<br>
+          Listing Type: ${property.listingType}<br>
+          Bedrooms: ${property.bedrooms}<br>
+          Bathrooms: ${property.bathrooms}<br>
+          Parking: ${property.parking}<br>
+          Price: $${property.price}<br>
+          Available Date: ${property.availableDate.toLocaleDateString()}<br>
+          Agent: ${property.agentName}<br>
+          Agent Email: ${property.agentEmail}<br>
+          Exclusive Listing: ${property.isExclusive ? 'Yes' : 'No'}
+        `;
+
+        propertyList.appendChild(listItem);
+      });
+    }
+
+    // Initial rendering
+    renderProperties();
+  </script>
+</body>
+</html>
