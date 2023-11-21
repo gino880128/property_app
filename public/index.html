@@ -63,6 +63,8 @@
 
     <button type="submit">Add Property</button>
   </form>
+  <label for="showExclusive">Show Only Exclusive Listings:</label>
+  <input type="checkbox" id="showExclusive" onchange="renderProperties()"><br>
   </div>
 
   <div id="updatePropertyForm" style="display:none;">
@@ -122,6 +124,8 @@
 
     <button type="submit" id="updateButton">Update Property</button>
   </form>
+  <label for="showExclusive">Show Only Exclusive Listings:</label>
+<input type="checkbox" id="showExclusive" onchange="renderProperties()"><br>
   </div>
 
   <div id="search" style="display:none;">
@@ -132,7 +136,6 @@
   <!-- Container to display search results -->
   <div id="searchResults"></div>
   <ul id="property-list">
-    <!-- Properties will be dynamically added here -->
   </ul>
   <script>
 
@@ -141,7 +144,6 @@
       document.getElementById('updatePropertyForm').style.display = 'none';
       document.getElementById('property-list').style.display = 'block';
       document.getElementById('search').style.display = 'none';
-
     });
 
     document.getElementById('showUpdateFormButton').addEventListener('click', function() {
@@ -252,11 +254,19 @@ const property = {
     
     // Function to render properties
     function renderProperties() {
-      propertyList.innerHTML = ''; // Clear the existing list
+  const propertyList = document.getElementById('property-list');
+  const showExclusive = document.getElementById('showExclusive').checked;
 
-      property.properties.forEach((property, index) => {
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `
+  propertyList.innerHTML = ''; // Clear the existing list
+
+  property.properties.forEach((property, index) => {
+    // If showExclusive is checked, skip non-exclusive properties
+    if (showExclusive && !property.isExclusive) {
+      return;
+    }
+
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `
       <strong>${property.name}</strong><br>
       Address: ${property.address}<br>
       Type: ${property.type}<br>
@@ -271,10 +281,9 @@ const property = {
       Exclusive Listing: ${property.isExclusive ? 'Yes' : 'No'}<br>
       <button onclick="deleteProperty(${index})">Delete</button>
     `;
-      propertyList.appendChild(listItem);
-      });
-    }
-
+    propertyList.appendChild(listItem);
+  });
+}
     /////delete////////////////////////////////////////////////
 
     function deleteProperty(index) {
@@ -345,12 +354,17 @@ updateForm.addEventListener("submit", function (event) {
       formDataObject[key] = value;
     });
 
+
+
     const selectedId = parseInt(document.getElementById('propertyId').value, 10);
     const propertyIndex = property.properties.findIndex(p => p.id === selectedId);
 
+    console.log(formDataObject)
+
     formDataObject.availableDate = new Date(formDataObject.availableDate);
     formDataObject.id = propertyIndex + 1;
-
+    
+    formDataObject.isExclusive = formDataObject.exclusiveListing === "on";
     property.properties[propertyIndex] = formDataObject;
 
     form.reset();
