@@ -221,6 +221,8 @@ const property = {
         agentContactNumber: data.agentContactNumber || "",
         exclusiveListing: data.exclusiveListing === "on",
       };
+
+      console.log(newProperty)
       this.properties.push(newProperty);
     },
   };
@@ -241,6 +243,8 @@ const property = {
     formData.forEach((value, key) => {
       formDataObject[key] = value;
     });
+
+    console.log(formDataObject)
 
     // Add the property to the property object
     property.addProperty(formDataObject);
@@ -267,6 +271,8 @@ const property = {
     }
 
     const listItem = document.createElement('li');
+
+    console.log (property)
     listItem.innerHTML = `
       <strong>${property.name}</strong><br>
       Address: ${property.address}<br>
