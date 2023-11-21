@@ -8,8 +8,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Add Property</h1>
-  <form id="propertyForm" action="/add" method="post">
+  
+  <button id="showAddFormButton">Add Property</button>
+  <button id="showUpdateFormButton">Update Property</button>
+  <button id="SearchButton">Search</button>
+
+  <div id="addPropertyForm">
+    <form id="propertyForm">
     <label for="name">Property Name:</label>
     <input type="text" name="name" required><br>
 
@@ -58,14 +63,107 @@
 
     <button type="submit">Add Property</button>
   </form>
+  </div>
 
+  <div id="updatePropertyForm" style="display:none;">
 
-  <h1>Property Listings</h1>
+  <form id="updateProperty" >
+
+    <!-- Dropdown to select property ID -->
+    <label for="propertyId">Select Property ID:</label>
+    <select id="propertyId" required>
+      <!-- Options will be added dynamically -->
+    </select><br>
+    <label for="name">Property Name:</label>
+    <input type="text" name="name" required><br>
+
+    <label for="address">Property Address:</label>
+    <input type="text" name="address" required><br>
+
+    <label for="type">Property Type:</label>
+    <select name="type" required>
+      <option value="House">House</option>
+      <option value="Apartment">Apartment</option>
+      <option value="Townhouse">Townhouse</option>
+    </select><br>
+
+    <label for="listingType">Listing Type:</label>
+    <select name="listingType" required>
+      <option value="For sale">For sale</option>
+      <option value="For rent">For rent</option>
+    </select><br>
+
+    <label for="bedrooms">Number of Bedrooms:</label>
+    <input type="number" name="bedrooms" required><br>
+
+    <label for="bathrooms">Number of Bathrooms:</label>
+    <input type="number" name="bathrooms" required><br>
+
+    <label for="parking">Number of Parking Spaces:</label>
+    <input type="number" name="parking" required><br>
+
+    <label for="price">Price:</label>
+    <input type="number" name="price" required><br>
+
+    <label for="availableDate">Available Date:</label>
+    <input type="date" name="availableDate" required><br>
+
+    <label for="agentName">Agent Name:</label>
+    <input type="text" name="agentName" required><br>
+
+    <label for="agentEmail">Agent Email:</label>
+    <input type="email" name="agentEmail" required><br>
+
+    <label for="agentContactNumber">Agent Contact Number:</label>
+    <input type="text" name="agentContactNumber"><br>
+
+    <label for="exclusiveListing">Exclusive Listing:</label>
+    <input type="checkbox" name="exclusiveListing"><br>
+
+    <button type="submit" id="updateButton">Update Property</button>
+  </form>
+  </div>
+
+  <div id="search">
+      <label for="searchId">Search Property by ID:</label>
+      <input type="number" id="searchId" placeholder="Enter property ID">
+      <button id="searchButton">Search</button>
+  </div>
+  <!-- Container to display search results -->
+  <div id="searchResults"></div>
+  </div>
   <ul id="property-list">
     <!-- Properties will be dynamically added here -->
   </ul>
-
   <script>
+
+    document.getElementById('showAddFormButton').addEventListener('click', function() {
+      document.getElementById('addPropertyForm').style.display = 'block';
+      document.getElementById('updatePropertyForm').style.display = 'none';
+      document.getElementById('property-list').style.display = 'block';
+      document.getElementById('search').style.display = 'none';
+
+    });
+
+    document.getElementById('showUpdateFormButton').addEventListener('click', function() {
+
+      populatePropertyIdDropdown();
+
+      document.getElementById('addPropertyForm').style.display = 'none';
+      document.getElementById('updatePropertyForm').style.display = 'block';
+      document.getElementById('property-list').style.display = 'block';
+      document.getElementById('search').style.display = 'none';
+
+    });
+
+    document.getElementById('SearchButton').addEventListener('click', function() {
+      document.getElementById('property-list').style.display = 'none';
+      document.getElementById('addPropertyForm').style.display = 'none';
+      document.getElementById('updatePropertyForm').style.display = 'none';
+      document.getElementById('search').style.display = 'block';
+
+    });
+
 
 
 const property = {
@@ -103,8 +201,10 @@ const property = {
         isExclusive: true,
       },
     ],
+
     addProperty: function(data) {
       const newProperty = {
+        id: property.properties.length + 1,
         name: data.name,
         address: data.address,
         type: data.type,
@@ -119,10 +219,12 @@ const property = {
         agentContactNumber: data.agentContactNumber || "",
         exclusiveListing: data.exclusiveListing === "on",
       };
-
       this.properties.push(newProperty);
     },
   };
+
+
+  ////add form//////////////////////////////////////////////////////////
 
   // Get the form element
   const form = document.getElementById("propertyForm");
@@ -138,19 +240,14 @@ const property = {
       formDataObject[key] = value;
     });
 
-    console.log(formDataObject)
-
     // Add the property to the property object
     property.addProperty(formDataObject);
-
     // Clear the form fields (optional)
     form.reset();
     renderProperties();
     // Log the updated property object
-    console.log(property.properties);
   });
 
-  
     // JavaScript code to dynamically populate the property list
     const propertyList = document.getElementById('property-list');
     
@@ -158,26 +255,142 @@ const property = {
     function renderProperties() {
       propertyList.innerHTML = ''; // Clear the existing list
 
-      property.properties.forEach((property) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-          <strong>${property.name}</strong><br>
-          Address: ${property.address}<br>
-          Type: ${property.type}<br>
-          Listing Type: ${property.listingType}<br>
-          Bedrooms: ${property.bedrooms}<br>
-          Bathrooms: ${property.bathrooms}<br>
-          Parking: ${property.parking}<br>
-          Price: $${property.price}<br>
-          Available Date: ${property.availableDate.toLocaleDateString()}<br>
-          Agent: ${property.agentName}<br>
-          Agent Email: ${property.agentEmail}<br>
-          Exclusive Listing: ${property.isExclusive ? 'Yes' : 'No'}
-        `;
-
-        propertyList.appendChild(listItem);
+      property.properties.forEach((property, index) => {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `
+      <strong>${property.name}</strong><br>
+      Address: ${property.address}<br>
+      Type: ${property.type}<br>
+      Listing Type: ${property.listingType}<br>
+      Bedrooms: ${property.bedrooms}<br>
+      Bathrooms: ${property.bathrooms}<br>
+      Parking: ${property.parking}<br>
+      Price: $${property.price}<br>
+      Available Date: ${property.availableDate.toLocaleDateString()}<br>
+      Agent: ${property.agentName}<br>
+      Agent Email: ${property.agentEmail}<br>
+      Exclusive Listing: ${property.isExclusive ? 'Yes' : 'No'}<br>
+      <button onclick="deleteProperty(${index})">Delete</button>
+    `;
+      propertyList.appendChild(listItem);
       });
     }
+
+    /////delete////////////////////////////////////////////////
+
+    function deleteProperty(index) {
+    // Remove the property at the specified index from the properties array
+    property.properties.splice(index, 1);
+
+    // Re-render the updated list of properties
+    renderProperties();
+    }
+
+
+
+    //update//////////////////////////////////////////////////
+    // Function to populate the property ID dropdown
+    function populatePropertyIdDropdown() {
+      const propertyIdSelect = document.getElementById('propertyId');
+      propertyIdSelect.innerHTML = ''; // Clear existing options
+
+      property.properties.forEach(property => {
+        const option = document.createElement('option');
+        option.value = property.id;
+        option.textContent = property.id;
+        propertyIdSelect.appendChild(option);
+      });
+    }
+
+    // Function to fill the form when an ID is selected
+    function fillFormWithPropertyData() {
+    const selectedId = parseInt(document.getElementById('propertyId').value, 10);
+    const selectedProperty = property.properties.find(p => p.id === selectedId);
+
+  if (selectedProperty) {
+    document.querySelector('#updateProperty [name="name"]').value = selectedProperty.name;
+    document.querySelector('#updateProperty [name="address"]').value = selectedProperty.address;
+    document.querySelector('#updateProperty [name="type"]').value = selectedProperty.type;
+    document.querySelector('#updateProperty [name="listingType"]').value = selectedProperty.listingType;
+    document.querySelector('#updateProperty [name="bedrooms"]').value = selectedProperty.bedrooms;
+    document.querySelector('#updateProperty [name="bathrooms"]').value = selectedProperty.bathrooms;
+    document.querySelector('#updateProperty [name="parking"]').value = selectedProperty.parking;
+    document.querySelector('#updateProperty [name="price"]').value = selectedProperty.price;
+    document.querySelector('#updateProperty [name="availableDate"]').value = selectedProperty.availableDate.toISOString().split('T')[0];
+    document.querySelector('#updateProperty [name="agentName"]').value = selectedProperty.agentName;
+    document.querySelector('#updateProperty [name="agentEmail"]').value = selectedProperty.agentEmail;
+    document.querySelector('#updateProperty [name="agentContactNumber"]').value = selectedProperty.agentContactNumber;
+
+    // Check or uncheck the 'exclusiveListing' checkbox
+    if (selectedProperty.isExclusive) {
+      document.querySelector('#updateProperty [name="exclusiveListing"]').checked = true;
+    } else {
+      document.querySelector('#updateProperty [name="exclusiveListing"]').checked = false;
+    }
+  }
+}
+
+// Event listener for property ID selection change
+document.getElementById('propertyId').addEventListener('change', fillFormWithPropertyData);
+
+const updateForm = document.getElementById('updateProperty');
+
+
+updateForm.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Get form data
+    const formData = new FormData(updateForm);
+    const formDataObject = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
+    });
+
+    const selectedId = parseInt(document.getElementById('propertyId').value, 10);
+    const propertyIndex = property.properties.findIndex(p => p.id === selectedId);
+
+    formDataObject.availableDate = new Date(formDataObject.availableDate);
+    formDataObject.id = propertyIndex + 1;
+
+    property.properties[propertyIndex] = formDataObject;
+
+    form.reset();
+    renderProperties();
+  });
+
+
+  //search/////////////////////////////////////////////////////////////////
+
+  document.getElementById('searchButton').addEventListener('click', function() {
+  const searchId = parseInt(document.getElementById('searchId').value, 10);
+  const searchResultsContainer = document.getElementById('searchResults');
+
+  const foundProperty = property.properties.find(p => p.id === searchId);
+
+  if (foundProperty) {
+    // Display property details
+    let details = `
+            <h3>Property Details:</h3>
+            <p><strong>Name:</strong> ${foundProperty.name}</p>
+            <p><strong>Address:</strong> ${foundProperty.address}</p>
+            <p><strong>Type:</strong> ${foundProperty.type}</p>
+            <p><strong>Listing Type:</strong> ${foundProperty.listingType}</p>
+            <p><strong>Bedrooms:</strong> ${foundProperty.bedrooms}</p>
+            <p><strong>Bathrooms:</strong> ${foundProperty.bathrooms}</p>
+            <p><strong>Parking:</strong> ${foundProperty.parking}</p>
+            <p><strong>Price:</strong> $${foundProperty.price}</p>
+            <p><strong>Available Date:</strong> ${foundProperty.availableDate.toLocaleDateString()}</p>
+            <p><strong>Agent Name:</strong> ${foundProperty.agentName}</p>
+            <p><strong>Agent Email:</strong> ${foundProperty.agentEmail}</p>
+            <p><strong>Agent Contact Number:</strong> ${foundProperty.agentContactNumber}</p>
+            <p><strong>Exclusive Listing:</strong> ${foundProperty.isExclusive ? 'Yes' : 'No'}</p>
+        `;
+    searchResultsContainer.innerHTML = details;
+  } else {
+    searchResultsContainer.innerHTML = "<p>Property not found.</p>";
+  }
+});
+
 
     // Initial rendering
     renderProperties();
