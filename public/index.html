@@ -219,10 +219,9 @@ const property = {
         agentName: data.agentName,
         agentEmail: data.agentEmail,
         agentContactNumber: data.agentContactNumber || "",
-        exclusiveListing: data.exclusiveListing === "on",
+        isExclusive: data.exclusiveListing === "on",
       };
 
-      console.log(newProperty)
       this.properties.push(newProperty);
     },
   };
@@ -243,8 +242,6 @@ const property = {
     formData.forEach((value, key) => {
       formDataObject[key] = value;
     });
-
-    console.log(formDataObject)
 
     // Add the property to the property object
     property.addProperty(formDataObject);
@@ -269,10 +266,8 @@ const property = {
     if (showExclusive && !property.isExclusive) {
       return;
     }
-
     const listItem = document.createElement('li');
 
-    console.log (property)
     listItem.innerHTML = `
       <strong>${property.name}</strong><br>
       Address: ${property.address}<br>
@@ -364,12 +359,9 @@ updateForm.addEventListener("submit", function (event) {
       formDataObject[key] = value;
     });
 
-
-
     const selectedId = parseInt(document.getElementById('propertyId').value, 10);
     const propertyIndex = property.properties.findIndex(p => p.id === selectedId);
 
-    console.log(formDataObject)
 
     formDataObject.availableDate = new Date(formDataObject.availableDate);
     formDataObject.id = propertyIndex + 1;
