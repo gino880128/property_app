@@ -63,8 +63,6 @@
 
     <button type="submit">Add Property</button>
   </form>
-  <label for="showExclusive">Show Only Exclusive Listings:</label>
-  <input type="checkbox" id="showExclusive" onchange="renderProperties()"><br>
   </div>
 
   <div id="updatePropertyForm" style="display:none;">
@@ -124,8 +122,6 @@
 
     <button type="submit" id="updateButton">Update Property</button>
   </form>
-  <label for="showExclusive">Show Only Exclusive Listings:</label>
-<input type="checkbox" id="showExclusive" onchange="renderProperties()"><br>
   </div>
 
   <div id="search" style="display:none;">
@@ -135,14 +131,20 @@
   </div>
   <!-- Container to display search results -->
   <div id="searchResults"></div>
-  <ul id="property-list">
-  </ul>
+
+  <div id="listing">
+    <label for="showExclusive">Show Only Exclusive Listings:</label>
+    <input type="checkbox" id="showExclusive" onchange="renderProperties()"><br>
+    <ul id="property-list">
+    </ul>
+  </div>
+
   <script>
 
     document.getElementById('showAddFormButton').addEventListener('click', function() {
       document.getElementById('addPropertyForm').style.display = 'block';
       document.getElementById('updatePropertyForm').style.display = 'none';
-      document.getElementById('property-list').style.display = 'block';
+      document.getElementById('listing').style.display = 'block';
       document.getElementById('search').style.display = 'none';
     });
 
@@ -152,20 +154,18 @@
 
       document.getElementById('addPropertyForm').style.display = 'none';
       document.getElementById('updatePropertyForm').style.display = 'block';
-      document.getElementById('property-list').style.display = 'block';
+      document.getElementById('listing').style.display = 'block';
       document.getElementById('search').style.display = 'none';
 
     });
 
     document.getElementById('SearchButton').addEventListener('click', function() {
-      document.getElementById('property-list').style.display = 'none';
+      document.getElementById('listing').style.display = 'none';
       document.getElementById('addPropertyForm').style.display = 'none';
       document.getElementById('updatePropertyForm').style.display = 'none';
       document.getElementById('search').style.display = 'block';
 
     });
-
-
 
 const property = {
     properties: [
